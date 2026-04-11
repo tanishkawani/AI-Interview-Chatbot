@@ -111,7 +111,14 @@
   <!-- QUESTION BOX -->
   <div class="box">
     <h2>Question</h2>
-    <p id="question">Click Start to begin</p>
+   <div id="domainSelect">
+  <h3>Select Domain</h3>
+  <button onclick="selectDomain('HR')">HR</button>
+  <button onclick="selectDomain('Aptitude')">Aptitude</button>
+  <button onclick="selectDomain('Technical')">Technical</button>
+</div>
+
+<p id="question" style="display:none;"></p>
   </div>
 
   <!-- ANSWER BOX -->
@@ -137,12 +144,27 @@
 
 <!-- 🔷 SCRIPT -->
 <script>
-let questions = [
-  "Tell me about yourself",
-  "What are your strengths?",
-  "Explain OSI model",
-  "What is HTML?"
-];
+let questionBank = {
+  HR: [
+    "Tell me about yourself",
+    "What are your strengths?",
+    "Why should we hire you?"
+  ],
+
+  Aptitude: [
+    "What is 20% of 150?",
+    "Find next number: 2, 4, 8, 16, ?",
+    "If A = 1, B = 2, what is CAT?"
+  ],
+
+  Technical: [
+    "What is HTML?",
+    "Explain OSI model",
+    "What is DBMS?"
+  ]
+};
+
+let selectedDomain = "";
 
 let score = 0;
 let total = 0;
