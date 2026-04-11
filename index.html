@@ -2,34 +2,34 @@
 <html>
 <head>
   <title>AI Interview Chatbot</title>
-  <style>
-    <html>
-<head>
-  <title>AI Interview Chatbot</title>
 
   <style>
-    /* your old CSS here */
-  </style>
-
-</head>
     body {
       font-family: Arial;
       text-align: center;
-      background: #f4f6f9;
+      background: #e6f2ff;
+      margin: 0;
     }
 
     .screen {
       display: none;
-      margin-top: 100px;
+      margin-top: 120px;
     }
 
     button {
-      padding: 10px 20px;
+      padding: 12px 25px;
       margin: 10px;
+      background: white;
+      color: #007bff;
+      border: 2px solid #007bff;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:active {
       background: #007bff;
       color: white;
-      border: none;
-      border-radius: 5px;
     }
 
     #chatBox {
@@ -51,17 +51,56 @@
       text-align: right;
       margin: 10px;
     }
+
+    /* Top bar */
+    .topbar {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+    }
+
+    .menu {
+      display: none;
+      position: absolute;
+      right: 0;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 10px;
+      width: 150px;
+    }
+
+    .menu div {
+      padding: 8px;
+      cursor: pointer;
+    }
+
+    .menu div:hover {
+      background: #e6f2ff;
+    }
   </style>
 </head>
+
 <body>
 
-<!-- START SCREEN -->
+<!-- 🔷 TOP RIGHT MENU -->
+<div class="topbar">
+  <button onclick="toggleMenu()">🏠</button>
+
+  <div id="menu" class="menu">
+    <div>🔔 Notifications</div>
+    <div>📜 History</div>
+    <div>📊 Track Score</div>
+  </div>
+</div>
+
+<!-- 🔷 START SCREEN -->
 <div id="start" class="screen" style="display:block;">
   <h1>🤖 AI Interview Chatbot</h1>
   <button onclick="showDomain()">Start Test</button>
 </div>
 
-<!-- DOMAIN -->
+<!-- 🔷 DOMAIN SCREEN -->
 <div id="domain" class="screen">
   <h2>Select Domain</h2>
   <button onclick="selectDomain('HR')">HR</button>
@@ -70,7 +109,7 @@
   <button onclick="selectDomain('Aptitude')">Aptitude</button>
 </div>
 
-<!-- LEVEL -->
+<!-- 🔷 LEVEL SCREEN -->
 <div id="level" class="screen">
   <h2>Select Level</h2>
   <button onclick="startChat('Easy')">Easy</button>
@@ -78,13 +117,14 @@
   <button onclick="startChat('Hard')">Hard</button>
 </div>
 
-<!-- CHAT -->
+<!-- 🔷 CHAT SCREEN -->
 <div id="chat" class="screen">
   <h2>Interview Chatbot</h2>
 
   <div id="chatBox"></div>
 
   <input type="text" id="answer" placeholder="Type your answer">
+  <br>
   <button onclick="send()">Send</button>
 </div>
 
@@ -96,8 +136,14 @@ let questions = [
   "Tell me about yourself",
   "What are your strengths?",
   "Explain OSI model",
-  "What is HTML?"
+  "What is HTML?",
+  "Why should we hire you?"
 ];
+
+function toggleMenu(){
+  let menu = document.getElementById("menu");
+  menu.style.display = (menu.style.display === "block") ? "none" : "block";
+}
 
 function showDomain(){
   document.getElementById("start").style.display = "none";
