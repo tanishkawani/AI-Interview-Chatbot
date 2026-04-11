@@ -1,16 +1,135 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Home</title>
+  <title>AI Interview Chatbot</title>
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      background: #f4f6f9;
+    }
+
+    .screen {
+      display: none;
+      margin-top: 100px;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin: 10px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+
+    #chatBox {
+      width: 80%;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      height: 300px;
+      overflow-y: auto;
+      border-radius: 10px;
+    }
+
+    .bot {
+      text-align: left;
+      margin: 10px;
+    }
+
+    .user {
+      text-align: right;
+      margin: 10px;
+    }
+  </style>
 </head>
 <body>
 
-<h1>AI Interview Prep</h1>
-<button onclick="go()">Start</button>
+<!-- START SCREEN -->
+<div id="start" class="screen" style="display:block;">
+  <h1>🤖 AI Interview Chatbot</h1>
+  <button onclick="showDomain()">Start Test</button>
+</div>
+
+<!-- DOMAIN -->
+<div id="domain" class="screen">
+  <h2>Select Domain</h2>
+  <button onclick="selectDomain('HR')">HR</button>
+  <button onclick="selectDomain('Technical')">Technical</button>
+  <button onclick="selectDomain('Web')">Web</button>
+  <button onclick="selectDomain('Aptitude')">Aptitude</button>
+</div>
+
+<!-- LEVEL -->
+<div id="level" class="screen">
+  <h2>Select Level</h2>
+  <button onclick="startChat('Easy')">Easy</button>
+  <button onclick="startChat('Medium')">Medium</button>
+  <button onclick="startChat('Hard')">Hard</button>
+</div>
+
+<!-- CHAT -->
+<div id="chat" class="screen">
+  <h2>Interview Chatbot</h2>
+
+  <div id="chatBox"></div>
+
+  <input type="text" id="answer" placeholder="Type your answer">
+  <button onclick="send()">Send</button>
+</div>
 
 <script>
-function go(){
-  window.location.href = "dashboard.html";
+let domain = "";
+let level = "";
+
+let questions = [
+  "Tell me about yourself",
+  "What are your strengths?",
+  "Explain OSI model",
+  "What is HTML?"
+];
+
+function showDomain(){
+  document.getElementById("start").style.display = "none";
+  document.getElementById("domain").style.display = "block";
+}
+
+function selectDomain(d){
+  domain = d;
+  document.getElementById("domain").style.display = "none";
+  document.getElementById("level").style.display = "block";
+}
+
+function startChat(l){
+  level = l;
+  document.getElementById("level").style.display = "none";
+  document.getElementById("chat").style.display = "block";
+  askQuestion();
+}
+
+function askQuestion(){
+  let q = questions[Math.floor(Math.random()*questions.length)];
+  let chatBox = document.getElementById("chatBox");
+
+  chatBox.innerHTML += `<div class='bot'>🤖 ${q}</div>`;
+}
+
+function send(){
+  let ans = document.getElementById("answer").value;
+  let chatBox = document.getElementById("chatBox");
+
+  chatBox.innerHTML += `<div class='user'>🙋 ${ans}</div>`;
+
+  if(ans.length > 20){
+    chatBox.innerHTML += `<div class='bot'>👍 Good answer</div>`;
+  } else {
+    chatBox.innerHTML += `<div class='bot'>⚠️ Try to explain more</div>`;
+  }
+
+  document.getElementById("answer").value = "";
+
+  askQuestion();
 }
 </script>
 
