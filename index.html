@@ -1,29 +1,72 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AI Interview Chatbot</title>
+  <title>AI Interview App</title>
 
   <style>
     body {
-      font-family: Arial;
-      text-align: center;
-      background: #e6f2ff;
       margin: 0;
+      font-family: Arial;
+      background: #e6f2ff;
     }
 
-    .screen {
-      display: none;
-      margin-top: 120px;
+    /* TOP BAR */
+    .topbar {
+      display: flex;
+      justify-content: flex-end;
+      padding: 10px 20px;
+      background: #cce6ff;
+    }
+
+    .icon {
+      margin-left: 15px;
+      cursor: pointer;
+      font-size: 20px;
+    }
+
+    /* MAIN LAYOUT */
+    .container {
+      display: flex;
+      height: 85vh;
+      padding: 20px;
+      gap: 20px;
+    }
+
+    .box {
+      width: 50%;
+      background: white;
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0px 5px 15px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    /* ANSWER INPUT */
+    textarea {
+      width: 100%;
+      height: 60%;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+
+    /* BUTTONS */
+    .buttons {
+      text-align: center;
+      margin-top: 15px;
     }
 
     button {
-      padding: 12px 25px;
+      padding: 10px 20px;
       margin: 10px;
       background: white;
       color: #007bff;
       border: 2px solid #007bff;
       border-radius: 8px;
-      font-size: 16px;
       cursor: pointer;
     }
 
@@ -32,198 +75,127 @@
       color: white;
     }
 
-    #chatBox {
-      width: 80%;
-      margin: auto;
-      background: white;
-      padding: 20px;
-      height: 300px;
-      overflow-y: auto;
-      border-radius: 10px;
-    }
-
-    .bot {
-      text-align: left;
-      margin: 10px;
-    }
-
-    .user {
-      text-align: right;
-      margin: 10px;
-    }
-
-    .topbar {
-      position: absolute;
-      top: 10px;
-      right: 20px;
-    }
-
-    .menu {
+    /* POPUPS */
+    .popup {
       display: none;
-      position: absolute;
-      right: 0;
+      position: fixed;
+      top: 70px;
+      right: 20px;
       background: white;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      padding: 10px;
-      width: 150px;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0px 5px 10px rgba(0,0,0,0.2);
+      width: 250px;
     }
 
-    .menu div {
+    input {
+      width: 100%;
+      margin: 5px 0;
       padding: 8px;
-      cursor: pointer;
-    }
-
-    .menu div:hover {
-      background: #e6f2ff;
     }
   </style>
 </head>
 
 <body>
 
-<!-- 🔷 TOP MENU -->
+<!-- 🔷 TOP BAR -->
 <div class="topbar">
-  <button onclick="toggleMenu()">🏠</button>
+  <div class="icon" onclick="toggleProfile()">👤</div>
+  <div class="icon" onclick="showNotification()">🔔</div>
+  <div class="icon" onclick="showScore()">📊</div>
+</div>
 
-  <div id="menu" class="menu">
-    <div>🔔 Notifications</div>
-    <div>📜 History</div>
-    <div>📊 Track Score</div>
+<!-- 🔷 MAIN CONTENT -->
+<div class="container">
+
+  <!-- QUESTION BOX -->
+  <div class="box">
+    <h2>Question</h2>
+    <p id="question">Click Start to begin</p>
   </div>
+
+  <!-- ANSWER BOX -->
+  <div class="box">
+    <h2>Your Answer</h2>
+    <textarea id="answer" placeholder="Type your answer here..."></textarea>
+
+    <div class="buttons">
+      <button onclick="submitAnswer()">Submit</button>
+      <button onclick="endTest()">End Test</button>
+    </div>
+  </div>
+
 </div>
 
-<!-- 🔷 START -->
-<div id="start" class="screen" style="display:block;">
-  <h1>🤖 AI Interview Chatbot</h1>
-  <button onclick="showDomain()">Start Test</button>
+<!-- 🔷 PROFILE POPUP -->
+<div id="profile" class="popup">
+  <h3>Profile</h3>
+  <input type="text" placeholder="Name">
+  <input type="text" placeholder="Email">
+  <input type="text" placeholder="College">
 </div>
 
-<!-- 🔷 DOMAIN -->
-<div id="domain" class="screen">
-  <h2>Select Domain</h2>
-  <button onclick="selectDomain('HR')">HR</button>
-  <button onclick="selectDomain('Technical')">Technical</button>
-</div>
-
-<!-- 🔷 LEVEL -->
-<div id="level" class="screen">
-  <h2>Select Level</h2>
-  <button onclick="startChat('Easy')">Easy</button>
-  <button onclick="startChat('Medium')">Medium</button>
-  <button onclick="startChat('Hard')">Hard</button>
-</div>
-
-<!-- 🔷 CHAT -->
-<div id="chat" class="screen">
-  <h2>Interview Preparation and Feedback</h2>
-
-  <div id="chatBox"></div>
-
-  <input type="text" id="answer" placeholder="Type your answer">
-  <br>
-
-  <button onclick="send()">Send</button>
-  <button onclick="showScore()">End Test</button>
-</div>
-
+<!-- 🔷 SCRIPT -->
 <script>
-let domain = "";
-let level = "";
+let questions = [
+  "Tell me about yourself",
+  "What are your strengths?",
+  "Explain OSI model",
+  "What is HTML?"
+];
 
 let score = 0;
 let total = 0;
 
-let questionBank = {
-  HR: {
-    Easy: [
-      "Tell me about yourself",
-      "What are your strengths?"
-    ],
-    Medium: [
-      "Why should we hire you?",
-      "Describe a challenge you faced"
-    ],
-    Hard: [
-      "Where do you see yourself in 5 years?",
-      "How do you handle failure?"
-    ]
-  },
-
-  Technical: {
-    Easy: [
-      "What is HTML?",
-      "What is CSS?"
-    ],
-    Medium: [
-      "Explain OSI model",
-      "What is DBMS?"
-    ],
-    Hard: [
-      "Explain normalization",
-      "What is multithreading?"
-    ]
-  }
-};
-
-function toggleMenu(){
-  let menu = document.getElementById("menu");
-  menu.style.display = (menu.style.display === "block") ? "none" : "block";
+function start(){
+  nextQuestion();
 }
 
-function showDomain(){
-  document.getElementById("start").style.display = "none";
-  document.getElementById("domain").style.display = "block";
+function nextQuestion(){
+  let q = questions[Math.floor(Math.random()*questions.length)];
+  document.getElementById("question").innerText = q;
 }
 
-function selectDomain(d){
-  domain = d;
-  document.getElementById("domain").style.display = "none";
-  document.getElementById("level").style.display = "block";
-}
-
-function startChat(l){
-  level = l;
-  score = 0;
-  total = 0;
-
-  document.getElementById("level").style.display = "none";
-  document.getElementById("chat").style.display = "block";
-
-  askQuestion();
-}
-
-function askQuestion(){
-  let list = questionBank[domain][level];
-  let q = list[Math.floor(Math.random()*list.length)];
-
-  let chatBox = document.getElementById("chatBox");
-  chatBox.innerHTML += `<div class='bot'>🤖 ${q}</div>`;
-}
-
-function send(){
+function submitAnswer(){
   let ans = document.getElementById("answer").value;
-  let chatBox = document.getElementById("chatBox");
 
-  chatBox.innerHTML += `<div class='user'>🙋 ${ans}</div>`;
+  if(ans.trim() === ""){
+    alert("Please enter answer");
+    return;
+  }
 
   total++;
 
   if(ans.length > 20){
-    chatBox.innerHTML += `<div class='bot'>👍 Good answer</div>`;
     score++;
+    alert("Good Answer 👍");
   } else {
-    chatBox.innerHTML += `<div class='bot'>⚠️ Try to explain more</div>`;
+    alert("Improve your answer ⚠️");
   }
 
   document.getElementById("answer").value = "";
+  nextQuestion();
+}
 
-  askQuestion();
+function endTest(){
+  alert("Final Score: " + score + "/" + total);
+}
+
+function toggleProfile(){
+  let p = document.getElementById("profile");
+  p.style.display = (p.style.display === "block") ? "none" : "block";
+}
+
+function showNotification(){
+  alert("No new notifications 🔔");
 }
 
 function showScore(){
-  alert("Your Score: " + score + " / " + total);
+  alert("Score: " + score + "/" + total);
 }
+
+/* Start automatically */
+start();
 </script>
 
 </body>
