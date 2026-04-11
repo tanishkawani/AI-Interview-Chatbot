@@ -52,7 +52,6 @@
       margin: 10px;
     }
 
-    /* Top bar */
     .topbar {
       position: absolute;
       top: 10px;
@@ -83,7 +82,7 @@
 
 <body>
 
-<!-- 🔷 TOP RIGHT MENU -->
+<!-- 🔷 TOP MENU -->
 <div class="topbar">
   <button onclick="toggleMenu()">🏠</button>
 
@@ -94,22 +93,20 @@
   </div>
 </div>
 
-<!-- 🔷 START SCREEN -->
+<!-- 🔷 START -->
 <div id="start" class="screen" style="display:block;">
   <h1>🤖 AI Interview Chatbot</h1>
   <button onclick="showDomain()">Start Test</button>
 </div>
 
-<!-- 🔷 DOMAIN SCREEN -->
+<!-- 🔷 DOMAIN -->
 <div id="domain" class="screen">
   <h2>Select Domain</h2>
   <button onclick="selectDomain('HR')">HR</button>
   <button onclick="selectDomain('Technical')">Technical</button>
-  <button onclick="selectDomain('Web')">Web</button>
-  <button onclick="selectDomain('Aptitude')">Aptitude</button>
 </div>
 
-<!-- 🔷 LEVEL SCREEN -->
+<!-- 🔷 LEVEL -->
 <div id="level" class="screen">
   <h2>Select Level</h2>
   <button onclick="startChat('Easy')">Easy</button>
@@ -117,7 +114,7 @@
   <button onclick="startChat('Hard')">Hard</button>
 </div>
 
-<!-- 🔷 CHAT SCREEN -->
+<!-- 🔷 CHAT -->
 <div id="chat" class="screen">
   <h2>Interview Chatbot</h2>
 
@@ -125,20 +122,49 @@
 
   <input type="text" id="answer" placeholder="Type your answer">
   <br>
+
   <button onclick="send()">Send</button>
+  <button onclick="showScore()">End Test</button>
 </div>
 
 <script>
 let domain = "";
 let level = "";
 
-let questions = [
-  "Tell me about yourself",
-  "What are your strengths?",
-  "Explain OSI model",
-  "What is HTML?",
-  "Why should we hire you?"
-];
+let score = 0;
+let total = 0;
+
+let questionBank = {
+  HR: {
+    Easy: [
+      "Tell me about yourself",
+      "What are your strengths?"
+    ],
+    Medium: [
+      "Why should we hire you?",
+      "Describe a challenge you faced"
+    ],
+    Hard: [
+      "Where do you see yourself in 5 years?",
+      "How do you handle failure?"
+    ]
+  },
+
+  Technical: {
+    Easy: [
+      "What is HTML?",
+      "What is CSS?"
+    ],
+    Medium: [
+      "Explain OSI model",
+      "What is DBMS?"
+    ],
+    Hard: [
+      "Explain normalization",
+      "What is multithreading?"
+    ]
+  }
+};
 
 function toggleMenu(){
   let menu = document.getElementById("menu");
@@ -158,15 +184,20 @@ function selectDomain(d){
 
 function startChat(l){
   level = l;
+  score = 0;
+  total = 0;
+
   document.getElementById("level").style.display = "none";
   document.getElementById("chat").style.display = "block";
+
   askQuestion();
 }
 
 function askQuestion(){
-  let q = questions[Math.floor(Math.random()*questions.length)];
-  let chatBox = document.getElementById("chatBox");
+  let list = questionBank[domain][level];
+  let q = list[Math.floor(Math.random()*list.length)];
 
+  let chatBox = document.getElementById("chatBox");
   chatBox.innerHTML += `<div class='bot'>🤖 ${q}</div>`;
 }
 
@@ -176,8 +207,11 @@ function send(){
 
   chatBox.innerHTML += `<div class='user'>🙋 ${ans}</div>`;
 
+  total++;
+
   if(ans.length > 20){
     chatBox.innerHTML += `<div class='bot'>👍 Good answer</div>`;
+    score++;
   } else {
     chatBox.innerHTML += `<div class='bot'>⚠️ Try to explain more</div>`;
   }
@@ -185,6 +219,10 @@ function send(){
   document.getElementById("answer").value = "";
 
   askQuestion();
+}
+
+function showScore(){
+  alert("Your Score: " + score + " / " + total);
 }
 </script>
 
